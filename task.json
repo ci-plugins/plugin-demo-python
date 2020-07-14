@@ -1,0 +1,28 @@
+{
+    "atomCode": "demo",
+    "execution": {
+        "packagePath": "demo-1.0.0.tar.gz",
+        "language": "python",
+        "demands": [
+            "pip install demo-1.0.0.tar.gz"
+        ],
+        "target": "demo"
+    },
+    "input": {       
+        "input_var_1": {
+            "label":"入参1",
+            "default":"",
+            "placeholder":"入参1",
+            "type":"vuex-input",
+            "desc":"入参1",
+            "required": true
+        }
+    }, 
+    "output": {
+        "outputDemo": {        
+            "description" : "输出示例",
+            "type": "string",
+            "isSensitive": false
+        }
+    }
+}
