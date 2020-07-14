@@ -4,8 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from .python_atom_sdk import *
-sdk = AtomSDK()
+import python_atom_sdk as sdk
 
 
 def main():
