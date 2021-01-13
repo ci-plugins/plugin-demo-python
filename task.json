@@ -8,8 +8,8 @@
         ],
         "target": "demo"
     },
-    "input": {       
-        "input_var_1": {
+    "input": {
+        "input_demo": {
             "label":"入参1",
             "default":"",
             "placeholder":"入参1",
@@ -19,7 +19,7 @@
         }
     }, 
     "output": {
-        "outputDemo": {        
+        "output_demo": {
             "description" : "输出示例",
             "type": "string",
             "isSensitive": false
