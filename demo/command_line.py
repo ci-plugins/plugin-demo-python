@@ -7,11 +7,11 @@ from __future__ import unicode_literals
 import python_atom_sdk as sdk
 from .error_code import ErrorCode
 
-
 err_code = ErrorCode()
 
 
-def exit_with_error(error_type=None, error_code=None, error_msg="failed"):
+                                                                           # 待确认 ************************
+def exit_with_error(error_type=None, error_code=None, error_msg="failed", platform_code=None, platform_error_code=None):
     """
     @summary: exit with error
     """
@@ -22,11 +22,13 @@ def exit_with_error(error_type=None, error_code=None, error_msg="failed"):
     sdk.log.error("error_type: {}, error_code: {}, error_msg: {}".format(error_type, error_code, error_msg))
 
     output_data = {
-        "status":    sdk.status.FAILURE,
+        "status": sdk.status.FAILURE,
         "errorType": error_type,
         "errorCode": error_code,
-        "message":   error_msg,
-        "type":      sdk.output_template_type.DEFAULT
+        "message": error_msg,
+        "type": sdk.output_template_type.DEFAULT,
+        "platformCode": platform_code,
+        "platformErrorCode": platform_error_code
     }
     sdk.set_output(output_data)
 
@@ -45,10 +47,10 @@ def exit_with_succ(data=None, quality_data=None, msg="run succ"):
         output_template = sdk.output_template_type.QUALITY
 
     output_data = {
-        "status":  sdk.status.SUCCESS,
+        "status": sdk.status.SUCCESS,
         "message": msg,
-        "type":    output_template,
-        "data":    data
+        "type": output_template,
+        "data": data
     }
 
     if quality_data:
