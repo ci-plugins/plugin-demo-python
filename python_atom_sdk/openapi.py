@@ -129,87 +129,6 @@ class OpenApi():
         url = self.generate_url(path)
         return self.do_get(url)
 
-    def get_artifacts_url(self, file_src, file_path, project_id=None, pipeline_id=None, build_no=None):
-        """
-        @summary: 获取已归档构件的下载链接
-        @param file_src：构件源 PIPELINE 从本次已归档构件中获取, CUSTOM_DIR 从自定义版本仓库中获取
-        @param file_path: 构件的相对路径
-        """
-        path = "/artifactory/api/build/artifactories/thirdPartyDownloadUrl"
-        params = {
-            "artifactoryType": file_src,
-            "path": file_path,
-            "ttl": 3600 * 24
-        }
-        if project_id:
-            params["projectId"] = project_id
-        if pipeline_id:
-            params["pipelineId"] = pipeline_id
-        if project_id and pipeline_id:
-            if build_no:
-                params["buildNo"] = build_no
-            else:
-                params["buildNo"] = "-1"  # 最近一次构建
-        url = self.generate_url(path)
-        # self._log.debug(url)
-        # self._log.debug(params)
-        result, artifact_url_list = self.do_get(url, params=params)
-        return result, artifact_url_list
-
-    def get_artifacts_properties(self, file_src, file_path, project_id=None, pipeline_id=None, build_no=None):
-        """
-        @summary: 获取已归档构件的元数据
-        @param file_src：构件源 PIPELINE 从本次已归档构件中获取, CUSTOM_DIR 从自定义版本仓库中获取
-        @param file_path: 构件的相对路径
-        """
-        path = "/artifactory/api/build/artifactories/getPropertiesByRegex"
-        params = {
-            "artifactoryType": file_src,
-            "path": file_path
-        }
-        if project_id:
-            params["projectId"] = project_id
-        if pipeline_id:
-            params["pipelineId"] = pipeline_id
-        if project_id and pipeline_id:
-            if build_no:
-                params["buildNo"] = build_no
-            else:
-                params["buildNo"] = "-1"
-        url = self.generate_url(path)
-        # self._log.debug(url)
-        # self._log.debug(params)
-        return self.do_get(url, params=params)
-
-    def download_file(self, file_url, file_name=None):
-        """
-        @summary: 下载文件到本地
-        @param file_url: 下载链接
-        @param file_name: 本地储存的文件名，选填
-        @ret file_path_local: 下载后存储的本地路径
-        """
-        res = self.session.get(file_url, headers=self.header_auth, stream=True)
-
-        if res.status_code != 200:
-            self._log.error("download file failed, status_code is {}".format(res.status_code))
-            return False, res.status_code
-
-        if not file_name:
-            file_url_list = file_url.split("?", 1)
-            file_name = os.path.basename(file_url_list[0])
-
-        file_path_local = os.path.join(os.getenv(setting.BK_DATA_DIR, '.'), file_name)
-        file_path_dir = os.path.dirname(file_path_local)
-        if not os.path.exists(file_path_dir):
-            os.makedirs(file_path_dir)
-
-        with open(file_path_local, 'wb') as f_file:
-            for chunk in res.iter_content(chunk_size=1048576):
-                if chunk:
-                    f_file.write(chunk)
-
-        return True, file_path_local
-
     def get_repo_info(self, identity, identity_type):
         """
         @summary：根据代码库别名，获取代码库详细地址
@@ -222,24 +141,6 @@ class OpenApi():
         url = self.generate_url(path)
 
         return self.do_get(url, params=params)
-
-    def set_properties(self, file_src, file_path, properties):
-        """
-        @summary: 设置归档文件元数据
-        :param file_src：构件源 PIPELINE 从本次已归档构件中获取, CUSTOM_DIR 从自定义版本仓库中获取
-        :param file_path: 构件的相对路径
-        :param properties: 新设置的元数据，map类型
-        """
-        path = "artifactory/api/build/artifactories/properties?artifactoryType={}&path={}" \
-            .format(file_src, file_path)
-        url = self.generate_url(path)
-
-        header = {
-            "Content-type": "application/json"
-        }
-
-        ret, _msg = self.do_post(url, header, properties)
-        return ret
 
     def get_context_by_name(self, context_name):
         path = "/process/api/build/variable/get_build_context?contextName={}&check=true" \

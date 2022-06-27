@@ -153,55 +153,6 @@ def get_credential(credential_id):
     return client.get_credential(credential_id)
 
 
-def get_artifact_urls(file_src, file_path, projectId=None, pipelineId=None, buildNo=None):
-    """
-    @summary:获取构件下载链接
-    """
-    if projectId and not pipelineId:
-        return False, "pipelineId is null"
-    if pipelineId and not projectId:
-        return False, "projectId is null"
-    from .openapi import OpenApi
-    client = OpenApi()
-    return client.get_artifacts_url(file_src, file_path, project_id=projectId, pipeline_id=pipelineId, build_no=buildNo)
-
-
-def get_artifacts_properties(file_src, file_path, projectId=None, pipelineId=None, buildNo=None):
-    """
-    @summary:获取构建元数
-    """
-    if projectId and not pipelineId:
-        return False, "pipelineId is null"
-    if pipelineId and not projectId:
-        return False, "projectId is null"
-    from .openapi import OpenApi
-    client = OpenApi()
-    return client.get_artifacts_properties(file_src, file_path, project_id=projectId, pipeline_id=pipelineId,
-                                           build_no=buildNo)
-
-
-def download_file(file_src, file_path, file_name=None, projectId=None, pipelineId=None, buildNo=None):
-    """
-    @summary: 从仓库下载构件到本地
-    """
-    from .openapi import OpenApi
-    client = OpenApi()
-
-    result, download_url_list = get_artifact_urls(file_src, file_path, projectId=projectId, pipelineId=pipelineId,
-                                                  buildNo=buildNo)
-    if not result:
-        return False, download_url_list
-
-    if len(download_url_list) > 1:
-        log.error("found multiple files, confused")
-        return False, "found multiple files, confused"
-    elif len(download_url_list) == 0:
-        log.error("can not find file: {}, {}".format(file_src, file_path))
-        return False, "can not find file: {}, {}".format(file_src, file_path)
-
-    return client.download_file(download_url_list[0], file_name)
-
-
 def get_repo_info(identity, identity_type):
     """
     @summary: 获取代码库信息
@@ -209,16 +160,6 @@ def get_repo_info(identity, identity_type):
     from .openapi import OpenApi
     client = OpenApi()
     return client.get_repo_info(identity, identity_type)
-
-
-def set_properties(file_src, file_path, properties):
-    from .openapi import OpenApi
-    client = OpenApi()
-    if str(file_src) == "PIPELINE":
-        file_path = "/" + get_pipeline_id() + "/" + get_pipeline_build_id() + "/" + str(file_path).replace("/", "", 1)
-    elif str(file_src) == "CUSTOM_DIR":
-        file_path = "/" + str(file_path).replace("/", "", 1)
-    return client.set_properties(file_src, file_path, properties)
 
 
 def get_context_by_name(context_name):

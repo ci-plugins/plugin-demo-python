@@ -10,7 +10,6 @@ from .error_code import ErrorCode
 err_code = ErrorCode()
 
 
-                                                                           # 待确认 ************************
 def exit_with_error(error_type=None, error_code=None, error_msg="failed", platform_code=None, platform_error_code=None):
     """
     @summary: exit with error
